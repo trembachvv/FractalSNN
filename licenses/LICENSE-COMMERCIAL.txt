@@ -1,0 +1,14 @@
+COMMERCIAL OEM LICENSE AGREEMENT
+Project: FractalSNN Neuromorphic Library
+Copyright (C) 2026 Trembach V.V. All rights reserved.
+
+1. GRANT OF LICENSE
+This Commercial License grants the Licensee a non-exclusive, perpetual right to:
+- Integrate, link (statically or dynamically), and compile the FractalSNN codebase 
+  into proprietary and closed-source software products without AGPL copyleft restrictions.
+- Distribute compiled binaries in hardware, CNC controllers, SCADA systems, 
+  and embedded edge platforms without disclosing proprietary source code.
+
+2. SUPPORT & COMMERCIAL INQUIRIES
+For OEM commercial licensing terms and support agreements:
+Contact: trembach.job [at] yandex [dot] ru

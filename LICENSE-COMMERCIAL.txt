@@ -1,0 +1,6 @@
+COMMERCIAL DUAL-LICENSING AGREEMENT
+Copyright (C) 2026 Trembach V.V. All rights reserved.
+
+Commercial licensing permits proprietary use, dynamic/static linking without copyleft obligations,
+and embedding into closed-source industrial automation, CAD/CAM, or embedded devices.
+Contact: trembach.job (at) yandex [dot] ru for licensing inquiries.

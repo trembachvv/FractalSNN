@@ -1,0 +1,25 @@
+# Binaries and object files
+*.o
+*.ppu
+*.a
+*.so
+*.exe
+*.bin
+*.fsnn
+
+# FPC temporary files
+*.log
+fpc-debug.txt
+link.res
+fpctrace.log
+
+# Dataset and benchmark temp
+*.csv
+!examples/**/*.csv
+benchmarks/results/*.raw
+
+# IDE
+.vscode/
+.idea/
+backup/
+*.bak

@@ -1,0 +1,42 @@
+name: FractalSNN CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    name: Build & Verify on Linux (x86_64)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Free Pascal Compiler (FPC)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fpc
+
+      - name: Display FPC Version
+        run: fpc -iV
+
+      - name: Compile and Run Automated Test Suite
+        run: |
+          cd tests
+          fpc -O2 -Mobjfpc -S2 -Fu../src test_suite.pas
+          ./test_suite
+
+      - name: Compile and Verify Industrial Example
+        run: |
+          cd examples/01_vibration_anomaly
+          fpc -O3 -Mobjfpc -S2 -Fu../../src vibration_monitor.pas
+          ./vibration_monitor
+
+      - name: Compile and Run Benchmark Suite
+        run: |
+          cd benchmarks
+          fpc -O3 -Mobjfpc -S2 -Fu../src run_benchmarks.pas
+          ./run_benchmarks
