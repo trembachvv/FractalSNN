@@ -2,7 +2,7 @@
 {  Project:     FractalSNN Examples                                            }
 {  File:        examples/01_vibration_anomaly/vibration_monitor.pas            }
 {  Description: CNC Milling Spindle Predictive Maintenance Case                }
-{  Authors:     Trembach V.V. & Gemini (Google DeepMind)                       }
+{  Authors:     Trembach V.V.                        }
 {  License:     Dual-License: GNU AGPLv3 / Commercial OEM                      }
 { ============================================================================ }
 
@@ -60,7 +60,7 @@ var
 begin
   WriteLn('======================================================================');
   WriteLn('   FractalSNN Industrial Case: CNC Spindle Predictive Maintenance     ');
-  WriteLn('   Авторы: Трембач В.В. & AI Collaborator                             ');
+  WriteLn('   Автор: Трембач В.В.                                                ');
   WriteLn('======================================================================');
 
   RandSeed := 12345;

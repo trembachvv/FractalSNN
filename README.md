@@ -33,18 +33,27 @@
 ```text
 FractalSNN/
 ├── .github/workflows/ci.yml       # GitHub Actions CI/CD автоматические тесты
-├── src/                           # Исходный код спайкового ядра
+├── src/                           # Чистое спайковое ядро библиотеки (fsnn.*.pas)
 │   ├── fsnn.types.pas             # Базовые типы, структуры данных и конфигурации
 │   ├── fsnn.matrix.pas            # Плотная матричная алгебра с Kaiming Uniform
 │   ├── fsnn.neuron.pas            # Фрактальный дендритный слой f-LIF
+│   ├── fsnn.network.pas           # Двухслойная спайковая сеть и BPTT
 │   ├── fsnn.datasets.pas          # Генераторы рядов и чистый CSV-парсер
+│   ├── fsnn.tests.pas             # Внутренний тестовый стенд (94 теста)
 │   └── fsnn.agent.pas             # Агент с суррогатным BPTT и сериализацией
 ├── examples/
-│   └── 01_vibration_anomaly/      # Промышленный кейс: диагностика шпинделя ЧПУ
+│   ├── 01_vibration_anomaly/      # ЧПУ: диагностика шпинделя и подшипников
+│   ├── 02_agent_quickstart/       # Быстрый старт: базовый агент и ранний останов
+│   ├── 03_interactive_console/    # Интерактивная консоль REPL (/start, /pause, /ask)
+│   ├── 04_github_harvester/       # Выгрузка обучающих выборок кода через HTTP
+│   ├── 05_drone_flight_stability/ # БПЛА: детекция сваливания по данным IMU
+│   └── 06_ecg_arrhythmia_edge/    # Медицина: портативный детектор аритмии ЭКГ
 ├── benchmarks/
-│   └── run_benchmarks.pas         # Научный стенд на 15 сидов с расчетом D_box
+│   ├── run_benchmarks.pas         # Научный стенд на 15 сидов с расчетом D_box
+│   └── results/                   # Автоматические CSV и LOG отчеты
 └── tests/
-    └── test_suite.pas             # Регрессионные и модульные тесты
+    ├── test_suite.pas             # Раннер 94 системных тестов ядра
+    └── run_all_tests.sh           # Скрипт сборки и верификации
 ```
 
 🚀 Быстрый старт
@@ -53,16 +62,14 @@ FractalSNN/
 Компилятор Free Pascal Compiler (fpc) версии 3.2.0 или новее.
 
 ## Сборка и запуск тестов
-Bash
-git clone [https://github.com/trembachvv/FractalSNN.git](https://github.com/trembachvv/FractalSNN.git)
-Проверка в терминале - сделайте скрипт исполняемым и запустите:
 
-Bash
-cd tests
+git clone https://github.com/trembachvv/FractalSNN.git
+cd FractalSNN/tests
 chmod +x run_all_tests.sh
 ./run_all_tests.sh
 
-Каждый тест скомпилируется начисто, без единого Warning, и выдаст статус [PASS]. Теперь тесты можно смело коммитить и пушить в репозиторий.
+Каждый тест компилируется начисто и выдает вердикт:
+CI VERDICT: ALL TESTS PASSED SUCCESSFULLY (100% PASS).
 
 ## Как запустить бенчмарк
 
@@ -84,46 +91,47 @@ fpc -O3 -Mobjfpc -S2 -Fu../../src vibration_monitor.pas
 
 👥 Авторы и участие
 
-Трембач В. В. (Trembach V.V.) — Aвтор концепции и архитектуры:Проектирование дендритно-фрактальной математической модели.Разработка чистого ядра, матричной алгебры и алгоритмов на Free Pascal.Постановка прикладных промышленных задач вибромониторинга и edge-детекции.
-
-Gemini by Google DeepMind — ИИ-соавтор алгоритмов (AI Co-Designer):Математическое моделирование мультимасштабного спектра утечки $\beta$.Адаптация суррогатных градиентов для BPTT во времени.Проектирование синтетических бенчмарков, верификация тестов и метрики $D_{box}$.
+Copyright (C) 2026 Trembach V.V. All rights reserved. < trembach.job yandex ru >
 
 ---
-
+.
 📄 Лицензирование (Dual-Licensing)
-
 Проект поставляется под двойной лицензией:
+
 GNU AGPLv3: Для академического, научного и открытого некоммерческого использования.
 
-Commercial OEM License:
-Позволяет закрывать производный код и статически/динамически линковать библиотеку в закрытое промышленное ПО (станки ЧПУ, SCADA, контроллеры) без раскрытия собственных исходников. По коммерческим вопросам: trembach.job (at) yandex [dot] ru.
+Commercial OEM License: Позволяет закрывать производный код и статически/динамически линковать библиотеку в закрытое промышленное ПО (станки ЧПУ, SCADA, контроллеры, медтехника) без раскрытия собственных исходников. По коммерческим вопросам: trembach.job [at] yandex.ru.
 
 
 
 vv@vivo:~/LasarusProjects/FractalSNN/benchmarks$ ./run.sh
-======================================================================
+
+----------------------------------------------------------------------
           Запуск полного научного бенчмарка FractalSNN                
           Задействовано потоков CPU: 12                          
-======================================================================
+----------------------------------------------------------------------
 Free Pascal Compiler version 3.2.2+dfsg-20 [2023/03/30] for x86_64
 Copyright (c) 1993-2021 by Florian Klaempfl and others
 Target OS: Linux for x86-64
 Compiling run_benchmarks.pas
 Linking run_benchmarks
 37 lines compiled, 0.1 sec
-======================================================================
+----------------------------------------------------------------------
         FractalSNN: Полный научный бенчмарк (15 сидов)                
-======================================================================
-########## ЧАСТЬ 2: ИССЛЕДОВАТЕЛЬСКАЯ ПРОГРАММА ##########
+----------------------------------------------------------------------
+
+----------- ЧАСТЬ 2: ИССЛЕДОВАТЕЛЬСКАЯ ПРОГРАММА ---------------------
 
 
-=== Statistics over 15 seeds (txor, depth=4 sub=2) ===
+--- Statistics over 15 seeds (txor, depth=4 sub=2) ---
  Accuracy: 0.9380 +/- 0.0863 (CI95 0.0437, min=0.7367, max=1.0000)
  Spikes: 116.39 +/- 27.71
  Energy: 1037.5 +/- 263.0 pJ
  Collapsed: 0 / 15
 
-=== Fine ablation (15 seeds each, t-test vs depth=1 sub=1) ===
+
+--- Fine ablation (15 seeds each, t-test vs depth=1 sub=1) ---
+
 Depth | Sub | Acc (mean+/-std) | CI95 | Collapse | Spikes | Energy | t-test
 ------------------------------------------------------------------------------
     1 |   1 |  0.818+/-0.106 | 0.054 |   0/ 15 |   22.6 |    685 | baseline
@@ -139,7 +147,9 @@ Depth | Sub | Acc (mean+/-std) | CI95 | Collapse | Spikes | Energy | t-test
     4 |   2 |  0.900+/-0.110 | 0.055 |   0/ 15 |  133.2 |   1061 | p=0.0446 SIG
     4 |   4 |  0.936+/-0.130 | 0.066 |   0/ 15 |  236.3 |   2119 | p=0.0086 SIG
 
-=== Baseline Comparison: Fractal vs Monolithic LIF (15 seeds) ===
+
+--- Baseline Comparison: Fractal vs Monolithic LIF (15 seeds) ---
+
 Architecture       | Params | Acc (mean+/-std) | CI95  | Spikes | Energy
 -------------------+--------+------------------+-------+--------+-------
   [LIF d=4 baseline] Seeds: ............... done.
@@ -151,7 +161,9 @@ Fractal d=6 s=2    |   2976 |  0.912 +/- 0.115 | 0.058 |  198.1 |   1241
 LIF (same params)  |   2976 |  0.643 +/- 0.214 | 0.108 |   --   |   --
   t-test d=6 vs LIF: p=0.0000 (SIG)
 
-=== Depth scaling at sub=2 (15 seeds) ===
+
+--- Depth scaling at sub=2 (15 seeds) ---
+
 Depth | Acc (mean+/-std) | CI95 | Params | Energy | Collapse
 ------------------------------------------------------------
     1 |  0.839 +/- 0.145 | 0.073 |     96 |    687 |   0/ 15
@@ -162,7 +174,9 @@ Depth | Acc (mean+/-std) | CI95 | Params | Energy | Collapse
     6 |  0.901 +/- 0.131 | 0.066 |   2976 |   1110 |   0/ 15
     7 |  0.927 +/- 0.105 | 0.053 |   3552 |   1140 |   0/ 15
 
-=== Sub scaling at depth=4 (15 seeds) ===
+
+--- Sub scaling at depth=4 (15 seeds) ---
+
 Sub | Acc (mean+/-std) | CI95 | Params | Energy | Collapse
 ----------------------------------------------------------
   1 |  0.928 +/- 0.071 | 0.036 |    480 |    569 |   0/ 15
@@ -172,11 +186,15 @@ Sub | Acc (mean+/-std) | CI95 | Params | Energy | Collapse
   6 |  0.983 +/- 0.036 | 0.018 |  15840 |   3056 |   0/ 15
   8 |  0.942 +/- 0.102 | 0.052 |  28032 |   4086 |   0/ 15
 
-=== Fractal Dimension of Activations (Box-Counting, 15 seeds) ===
+
+--- Fractal Dimension of Activations (Box-Counting, 15 seeds) ---
+
 D_box (mean +/- std): 0.4562 +/- 0.0723 (CI95: 0.0366)
 Hypothesis PARTIALLY confirmed: activity close to linear attractor (D_box ~ 1.0).
 
-=== Beta sweep on delayed match (15 seeds) ===
+
+--- Beta sweep on delayed match (15 seeds) ---
+
 Beta | Acc (mean+/-std) | CI95
 --------------------------------
 0.850 |  0.589 +/- 0.124 | 0.063
@@ -187,7 +205,9 @@ Beta | Acc (mean+/-std) | CI95
 0.995 |  0.793 +/- 0.113 | 0.057
 0.999 |  0.786 +/- 0.126 | 0.064
 
-=== Noise sweep (15 seeds) ===
+
+--- Noise sweep (15 seeds) ---
+
 Noise | Acc (mean+/-std) | CI95
 --------------------------------
 0.00 |  0.949 +/- 0.079 | 0.040
@@ -197,7 +217,9 @@ Noise | Acc (mean+/-std) | CI95
 0.15 |  0.780 +/- 0.137 | 0.069
 0.20 |  0.697 +/- 0.116 | 0.059
 
-=== Prune robustness (15 seeds) ===
+
+--- Prune robustness (15 seeds) ---
+
 Prune | Acc (mean+/-std) | CI95
 --------------------------------
 0.1 |  0.978 +/- 0.058 | 0.030
@@ -206,7 +228,9 @@ Prune | Acc (mean+/-std) | CI95
 0.7 |  0.817 +/- 0.094 | 0.048
 0.9 |  0.556 +/- 0.096 | 0.048
 
-=== Quant per-channel robustness (15 seeds) ===
+
+--- Quant per-channel robustness (15 seeds) ---
+
 Bits | Acc (mean+/-std) | CI95
 --------------------------------
   4 |  0.977 +/- 0.054 | 0.027
@@ -214,7 +238,9 @@ Bits | Acc (mean+/-std) | CI95
   2 |  0.869 +/- 0.097 | 0.049
   1 |  0.593 +/- 0.110 | 0.056
 
-=== Kaiming gain sweep (15 seeds) ===
+
+--- Kaiming gain sweep (15 seeds) ---
+
 Gain | Acc (mean+/-std) | CI95 | Collapse
 -------------------------------------------
 0.50 |  0.533 +/- 0.083 | 0.042 |  13/ 15
@@ -225,7 +251,9 @@ Gain | Acc (mean+/-std) | CI95 | Collapse
 1.75 |  0.889 +/- 0.169 | 0.085 |   2/ 15
 2.00 |  0.923 +/- 0.129 | 0.065 |   1/ 15
 
-=== Lateral inhibition sweep (15 seeds) ===
+
+--- Lateral inhibition sweep (15 seeds) ---
+
 Value | Acc (mean+/-std) | CI95
 --------------------------------
 0.00 |  0.900 +/- 0.110 | 0.055
@@ -234,14 +262,17 @@ Value | Acc (mean+/-std) | CI95
 0.50 |  0.776 +/- 0.125 | 0.063
 0.70 |  0.789 +/- 0.135 | 0.068
 
-=== Surrogate gradient functions sweep (15 seeds) ===
+
+--- Surrogate gradient functions sweep (15 seeds) ---
+
 Surrogate   | Acc (mean+/-std) | CI95 | Spikes | Energy
 ------------+------------------+-------+--------+-------
 fastsigmoid |  0.900 +/- 0.110 | 0.055 |  161.9 |   1316
 arctan      |  0.863 +/- 0.154 | 0.078 |  128.0 |   1293
 piecewise   |  0.916 +/- 0.104 | 0.053 |  136.0 |   1299
 
-=== Sub-neuron aggregation benchmark (15 seeds) ===
+
+--- Sub-neuron aggregation benchmark (15 seeds) ---
 Aggregation | Acc (mean+/-std) | CI95 | Collapse
 ------------+------------------+-------+---------
 sum         |  0.901 +/- 0.138 | 0.070 |   0/ 15
@@ -250,7 +281,9 @@ attention   |  0.895 +/- 0.107 | 0.054 |   0/ 15
 max         |  0.927 +/- 0.096 | 0.049 |   0/ 15
 learned     |  0.900 +/- 0.110 | 0.055 |   0/ 15
 
-=== Delayed match: time-lag retention scaling (15 seeds) ===
+
+--- Delayed match: time-lag retention scaling (15 seeds) ---
+
 Delay (tau) | Acc (mean+/-std) | CI95 | TimeSteps
 ------------+------------------+-------+----------
           5 |  0.671 +/- 0.115 | 0.058 |        15
@@ -260,10 +293,11 @@ Delay (tau) | Acc (mean+/-std) | CI95 | TimeSteps
          25 |  0.507 +/- 0.115 | 0.058 |        35
 
 Время выполнения: 2445.3 сек.
-======================================================================
+
+----------------------------------------------------------------------
    [SUCCESS] Бенчмарк завершен за 2445 сек.
    Результаты сохранены в benchmarks/results/
-======================================================================  
+----------------------------------------------------------------------  
 
 1. Базовая статистика архитектуры (Statistics over 15 seeds)
 Конфигурация: Задача Temporal XOR, глубина фрактала D=4, число поднейронов на уровень S=2.   
